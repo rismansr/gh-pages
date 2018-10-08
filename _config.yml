@@ -27,7 +27,7 @@ github_username:  risman_sr
 # Build settings
 markdown: kramdown
 #theme: minima
-theme: minimal-mistakes-jekyll
+theme: jekyll-theme-leap-day
 plugins:
   - jekyll-feed
   - jekyll-include-cache
