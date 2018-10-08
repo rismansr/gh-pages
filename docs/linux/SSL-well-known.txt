@@ -1,0 +1,7 @@
+put this codes under http (80) port configuration on nginx or apache
+
+location /.well-known/pki-validation/49C51429B9FEF9CFC1D8CFE531F9DD9E.txt {
+        add_header Content-Type text/plain;
+       return 200 "1DB8782ACBF0F87371990720026BD50386DA7C444E91CCE61E52591D22AE3EC0
+comodoca.com53d1de246afd1e5bad25";
+}

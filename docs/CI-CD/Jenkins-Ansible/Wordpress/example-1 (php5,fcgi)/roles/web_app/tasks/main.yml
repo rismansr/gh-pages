@@ -1,0 +1,20 @@
+---
+  - block:
+#    - name: Unlink data folder before removing current package
+#      file: src={{application_data}} dest={{application_symlink}} owner={{user}} group={{user}} state=absent
+
+    - name: Setup the environment file for the application
+      template: src={{role_path}}/templates/vhost_directive.j2 dest=/etc/apache2/sites-available/{{config_file_name}}
+
+    - name: Enable virtual host directive
+      shell: a2ensite {{config_file_name}}
+      notify: reload apache
+
+    - name: Initial permission setup
+      file: path={{application_folder}} state=directory owner={{user}} group={{user}} recurse=yes
+
+    - name: Apply Storage files permissions
+      file: path={{application_folder}}/app/storage state=directory mode=0777 recurse=yes
+
+    tags:
+      - app_deploy

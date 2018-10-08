@@ -1,0 +1,5 @@
+docker run --name lawboxpro -v /home/risman/lawboxpro:/var/www/html -it -d -p 8005:80 =php:7.1.20-apache-jessie
+
+or
+
+docker run --name lawboxpro -v /home/risman/lawboxpro:/var/www/html -it -d -p 8005:80 --image=php:7.1.20-apache-jessie

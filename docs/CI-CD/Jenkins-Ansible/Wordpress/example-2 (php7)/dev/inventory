@@ -1,0 +1,35 @@
+[webserver]
+192.168.80.42
+
+[dbserver]
+192.168.80.43
+
+[webserver:vars]
+ansible_ssh_user = 'jenkins'
+ansible_ssh_pass = 'v0xtene0'
+ansible_become_pass = 'v0xtene0'
+domain_name = 'sil-dev.t5.voxteneo.com'
+application_folder = '/home/sil-dev/public_html/'
+temporary_folder = '/home/sil-dev/public_html_new/'
+backup_folder = '/home/sil-dev/public_html_old/'
+application_settings = '/home/sil-dev/public_html/'
+application_data = '/home/sil-dev/data/'
+application_symlink = '/home/sil-dev/public_html/wp-content/uploads'
+workspace = '/home/ansible/wordpress_projects/sil-dev/'
+build_folder_file = 'builds/{{ build_file }}'
+
+# Webserver, Apache & FastCGI
+user = 'sil-dev'
+config_file_name = 'sil-dev_ansible.conf'
+php_wrapper = '/home/sil-dev/cgi-bin/php5-default/'
+php_fcgi = '/home/sil-dev/'
+log_location = '/var/log/apache2/'
+
+# Database env files
+db_host = '192.168.80.43'
+db_database = 'sil_dev'
+db_username = 'sil-dev'
+db_password = 'WYgLAE3nTEE9'
+db_backup = '/tmp/db_backup'
+#mail_username = 'staging@voxteneo.asia'
+#mail_password = 'TSDl_dlfg-354'

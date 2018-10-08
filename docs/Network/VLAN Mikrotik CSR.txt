@@ -1,0 +1,86 @@
+Port switching
+--------------
+SwitchA, SwitchB
+/interface ethernet
+set [ find default-name=ether2 ] master-port=ether1
+set [ find default-name=ether3 ] master-port=ether1
+set [ find default-name=ether4 ] master-port=ether1
+set [ find default-name=ether5 ] master-port=ether1
+set [ find default-name=ether6 ] master-port=ether1
+set [ find default-name=ether7 ] master-port=ether1
+set [ find default-name=ether8 ] master-port=ether1
+set [ find default-name=ether9 ] master-port=ether1
+...
+
+/interface ethernet set [find where name~"sfp"] disabled=yes
+
+Port trunking
+=============
+To create a 2Gbps port trunk from ether1 and ether2 between SwitchA, SwitchB, use these commands on SwitchA and SwitchB:
+
+/interface ethernet switch trunk
+add member-ports=ether1,ether2 name=trunk-1-2
+
+Management IP
+=============
+Create a VLAN interface on SwitchA, SwitchB
+
+/interface vlan
+add interface=ether1 name=Vlan99 vlan-id=99
+
+/ip address
+add address=192.168.99.X/24 interface=Vlan99
+
+/ip route
+add gateway=192.168.99.1
+/ip dns
+set servers=192.168.99.1
+
+Add the IP address on the Router:
+
+/ip address
+add address=192.168.99.1/24 interface=Vlan99
+
+
+Port based VLAN
+===============
+To create each trunk port as access port, use these commands on SwitchA and SwitchC:
+
+/interface ethernet switch egress-vlan-tag
+add tagged-ports=trunk-1-2 vlan-id=10
+add tagged-ports=trunk-1-2 vlan-id=20
+add tagged-ports=trunk-1-2 vlan-id=30
+add tagged-ports=trunk-1-2 vlan-id=40
+
+
+Note: Management VLAN ID is not addedd to Egress VLAN tag table since a VLAN interface has been already created that will only send out tagged traffic either way.
+
+Specify for each Ethernet interface a VLAN ID that will be assigned for a device that uses the port, use these commands for SwitchA and SwitchC:
+
+/interface ethernet switch ingress-vlan-translation
+add new-customer-vid=10 ports=ether3,ether4,ether5,ether6
+add new-customer-vid=20 ports=ether7,ether8,ether9,ether10,ether11,ether12
+add new-customer-vid=30 ports=ether13,ether14,ether15,ether16,ether17,ether18
+add new-customer-vid=40 ports=ether19,ether20,ether21,ether22,ether23,ether24
+
+It is required add allowed VLAN IDs to the VLAN table in order for VLAN filtering to work properly. Specify each VLAN ID and each port that is allowed to forward a certain VLAN ID. Use trunk ports instead of physical Ethernet interfaces. Use these commands on SwitchA and SwitchC:
+
+/interface ethernet switch vlan
+add ports=trunk-1-2,ether3,ether4,ether5,ether6 vlan-id=10
+add ports=trunk-1-2,ether7,ether8,ether9,ether10,ether11,ether12 vlan-id=20
+add ports=trunk-1-2,ether13,ether14,ether15,ether16,ether17,ether18 vlan-id=30
+add ports=trunk-1-2,ether19,ether20,ether21,ether22,ether23,ether24 vlan-id=40
+add ports=trunk-1-2,switch1-cpu vlan-id=99
+
+
+Note: It is required to specify switch1-cpu port in the VLAN table in order to allow access the the previously created VLAN interface for management purposes.
+
+Invalid VLAN filtering
+======================
+/interface ethernet switch
+set drop-if-invalid-or-src-port-not-member-of-vlan-on-ports="ether1,ether2,ether3,ether4\
+,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13\
+,ether14,ether15,ether16,ether17,ether18,ether19,ether20,ether21,ether22,ether23,ether24"
+
+
+

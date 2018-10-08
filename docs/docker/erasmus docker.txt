@@ -1,0 +1,69 @@
+Note Erasmus WP Public
+- PHP version 5
+- htaccess is not copied to docker image
+- edit RewriteBase on .htaccess to web root directory
+- rename old url in database to new url
+- 
+
+
+wordpress Dockerfile :
+ 
+FROM debian
+ 
+RUN apt update
+RUN apt -y install apache2 libapache2-mod-php7.0 php7.0 \
+php7.0-mysql php7.0-curl php7.0-gd php7.0-geoip php7.0-json \
+php7.0-mbstring php7.0-opcache
+ 
+RUN mkdir -p /etc/apache2/ssl
+COPY ssl/wildcard.t5.voxteneo.com.crt /etc/apache2/ssl/wildcard.t5.voxteneo.com.crt
+COPY ssl/wildcard.t5.voxteneo.com.key /etc/apache2/ssl/wildcard.t5.voxteneo.com.key
+COPY epluswp.conf /etc/apache2/sites-available/epluswp.conf
+ 
+ADD website /var/www/html/website
+ 
+RUN a2enmod rewrite && \
+a2enmod ssl && \
+a2ensite epluswp.conf && \
+a2dissite 000-default.conf && \
+service apache2 restart
+ 
+CMD service apache2 start && tail -F /var/log/apache2/access.log
+EXPOSE 443 80
+ 
+mysql Dockerfile :
+ 
+FROM debian
+RUN apt update
+RUN apt -y install mysql-server
+COPY erasmus_wp.sql /tmp/erasmus_wp.sql
+RUN service mysql start && \
+    mysql -uroot -e "CREATE DATABASE erasmus_wp" && \
+    mysql -uroot -D erasmus_wp < /tmp/erasmus_wp.sql && \
+    mysql -uroot -e "grant all on erasmus_wp.* to 'erasmuswp'@'%' identified by '77fyec&9V^Xx';" && \
+    mysql -uroot -e "flush privileges;" &&\
+    rm /tmp/erasmus_wp.sql && apt-get clean
+RUN sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
+CMD service mysql start && tail -F /var/log/mysql/error.log
+EXPOSE 3306
+ 
+then I run this two image with compose file
+ 
+docker-compose.yml
+version: '3.3'
+services:
+   db:
+     image: eplusdb:0.1
+     ports:
+     - "3306:3306"
+     restart: always
+   wordpress:
+     depends_on:
+       - db
+     image: epluswp:0.1
+     ports:
+       - "443:443"
+       - "80:80"
+     restart: always
+     
+I was create the test environment on ID vmware server and use https://eplus-docker.t5.voxteneo.com as the domain, and setup vhost configuration on nginx 80.10 to make it accessible.

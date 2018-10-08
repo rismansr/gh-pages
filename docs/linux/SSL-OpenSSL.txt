@@ -1,0 +1,1 @@
+openssl req -nodes -newkey rsa:2048 -sha256 -keyout q2.voxteneo.com.key -out q2.voxteneo.com.csr

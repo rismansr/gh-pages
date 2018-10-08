@@ -1,0 +1,15 @@
+Please note that it s a linux server therefore I would need to know if we should need a Shared, Small, Medium or Large size so  that we know ahead of time of the cost of hosting.
+ 
+ 
+1.What would be the purpose of the website? (ex: info-site, generating pdf files, hosting images, hosting videos)
+>>Reporting using elastic chart and info-site
+2. How often will there be changes on the website from the client side and what would the changes be? (importing new content in form of text, pdf, images or videos)
+>>I would expect really few changes, if any text or content import.
+3. What is the target audience? (how many visitors per month are expected at the beginning and will that target grow)
+>>Hard to say at this stage
+4. Will the audience be from different parts of the world or from a single country? (Is there need for CDN which would make the response time faster for different parts of the world)
+>>Yes the users will be from all over the world - CDN needed
+5. In which technology the application will be developed?
+>>Laravel
+6. Is there an existing hardware specification in the signed hosting contract for production?
+>>No

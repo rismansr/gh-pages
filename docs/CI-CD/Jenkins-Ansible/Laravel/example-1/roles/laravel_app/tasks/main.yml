@@ -1,0 +1,50 @@
+---
+  - block:
+#    - name: Remove any previous deployed package
+#      file: path={{application_folder}} state=absent
+
+    - name: Prepare the structure for the new package
+      file: dest={{temporary_folder}} state=directory
+
+    - name: Extract Jenkins package
+      unarchive: src={{workspace}}{{build_folder_file}} dest={{temporary_folder}} copy=yes
+
+    - name: Setup environment file for the application
+      template: src={{role_path}}/templates/env.j2 dest={{temporary_folder}}/.env
+
+    - name: Spawn storage folders
+      file: dest={{temporary_folder}}/storage/{{item.0}} state=directory
+      with_nested:
+        - ['views']
+        - ['storage']
+        - ['logs']
+
+    - name: Retake ownership with the original user
+      file: path={{temporary_folder}} state=directory owner={{user}} group={{user}} recurse=yes
+
+    - name: Give Jenkins access to the project
+      acl: name={{temporary_folder}} entity=jenkins etype=user permissions=rwx state=present recursive=yes
+
+    - name: Do the migrations
+      shell: chdir={{temporary_folder}} php artisan migrate
+
+    - name: Rename temporary folder to application folder
+      shell: chdir=/home/{{user}}/ mv public_html public_html_old && mv public_html_new public_html
+
+    - name: Remove public/upload folder
+      file: path={{public_upload_symlink}} state=absent
+
+    - name: Remove public/upload folder
+      file: path={{storage_upload_symlink}} state=absent
+
+    - name: Make the symlink for public/upload
+      file: src={{public_upload_data}} dest={{public_upload_symlink}} owner={{user}} group={{user}} state=link
+
+    - name: Make the symlink for storage/upload
+      file: src={{storage_upload_data}} dest={{storage_upload_symlink}} owner={{user}} group={{user}} state=link
+
+    - name: Remove backup folder
+      file: path={{backup_folder}} state=absent
+
+    tags:
+      - app_deploy

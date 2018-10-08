@@ -1,0 +1,60 @@
+<VirtualHost *:8080>
+
+	DocumentRoot {{application_folder}}
+	ServerName {{domain_name}}
+	SuexecUserGroup {{user}} {{user}}
+	LogLevel debug
+
+# On Access preserve real client IP in logs
+
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" proxy
+SetEnvIf X-Forwarded-For "^.*\..*\..*\..*" forwarded
+CustomLog ${APACHE_LOG_DIR}/{{ db_database }}-access_log combined env=!forwarded
+CustomLog ${APACHE_LOG_DIR}/{{ db_database }}-access_log proxy env=forwarded
+ErrorLog /var/log/apache2/{{ db_database }}-error_log
+
+# Enable compression on Apache
+
+ <Location {{ application_folder}}>
+ AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/x-javascript
+ </Location>
+
+ <Directory "{{ php_fcgi }}">
+ Options Indexes FollowSymLinks MultiViews
+ AllowOverride All
+ Require all granted
+ </Directory>
+
+AddHandler php-fcgi .php
+ Action php-fcgi /fcgi-bin/php-fcgi-wrapper
+
+# FastCgiExternalServer /var/www/cgi-bin/php5-default_php538 -socket /var/run/php5-fpm.sock -pass-header Authorization
+# Define alias "/fcgi-bin/". The action above is using this value, which means that
+ # you could run another "php5-cgi" command by just changing this alias
+
+Alias /fcgi-bin/ {{ php_fcgi }}cgi-bin/php5-default/
+
+<IfModule mod_fcgid.c>
+
+  IPCCommTimeout 900
+  FcgidMaxRequestLen 20971520
+  FcgidBusyTimeout 7200
+  FcgidIOTimeout 300
+  FcgidMinProcessesPerClass 0
+  FcgidIdleTimeout 3
+  FcgidProcessLifeTime 30
+
+</IfModule>
+
+# Turn on the fcgid-script handler for all files within the alias "/fcgi-bin/" 
+
+ <Location /fcgi-bin/>
+ SetHandler fcgid-script
+ Options +ExecCGI
+ </Location>
+
+RewriteEngine On
+RewriteRule ^/fcgi-bin/[^/]*$ / [PT]
+
+</VirtualHost>

@@ -1,0 +1,9 @@
+Dockerize wordpress
+
+- Create file with name "Dockerfile" and edit the file
+		FROM wordpress:php7.1-apache
+		COPY . /var/www/html
+- insert to website root directory : cd my_repo
+- Build docker image : docker build -t 'image_name' .
+- Run docker : docker run --name my_container_name -p 8000:80 -d image_name
+- 

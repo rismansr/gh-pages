@@ -1,0 +1,65 @@
+[webserver]
+192.168.80.42
+
+[dbserver]
+192.168.80.43
+
+[webserver:vars]
+ansible_ssh_user = 'jenkins'
+ansible_ssh_pass = 'v0xtene0'
+ansible_become_pass = 'v0xtene0'
+app_name = 'Neatyy_STAGING'
+app_debug = 'false'
+app_log_level = 'debug'
+app_url_schema = 'https'
+app_url_domain = 'nea-staging.t5.voxteneo.com'
+app_env = 'staging'
+recaptcha_public_key = '6LeWRT8UAAAAADVTckTJ8ryjB-PGfKysQ8tyLHST'
+recaptcha_private_key = '6LeWRT8UAAAAANX0qE8O51fTDHDszNWwZiYI4tzd'
+google_api_key = 'AIzaSyDN3cZoiuLhNlNEl42OfXtzzE0uXHZU85A'
+stripe_key = 'pk_test_dGK1mhnH2D2hfdXCXSKvqp66'
+stripe_secret = 'sk_test_azca0lePefw3d36DQHli7qu2'
+id_analytics = ''
+fb_key = '135231133731409'
+fb_secret = '2573bb299eaa7ec7a85e30b6572310c9'
+giftup_public = '7b1e013e-eca3-483d-9c90-9db308d31c32'
+giftup_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmZDMzNzViMi1lYmYzLTQ2MjUtOWQxYS00MjRmNzMxZWFmODgiLCJzdWIiOiJqYmVAdm94dGVuZW8uY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW5pc3RyYXRvciIsImV4cCI6MTgyODY4NTUyMywiaXNzIjoiaHR0cHM6Ly9kYXNoYm9hcmQuZ2lmdHVwYXBwLmNvbS8iLCJhdWQiOiJodHRwczovL2Rhc2hib2FyZC5naWZ0dXBhcHAuY29tLyJ9.ts8mIuTsjiqkYYxwY-koYjPfdvMRauj4DWLz6yGX58E'
+
+# Folders
+application_folder = '/home/nea_staging/public_html/'
+temporary_folder = '/home/nea_staging/public_html_new/'
+backup_folder = '/home/nea_staging/public_html_old/'
+public_upload_data = '/home/nea_staging/data/public_upload'
+public_upload_symlink = '/home/nea_staging/public_html/public/upload'
+storage_upload_data = '/home/nea_staging/data/storage_upload'
+storage_upload_symlink = '/home/nea_staging/public_html/storage/upload'
+application_data = '/home/nea_staging/data/'
+application_symlink = '/home/nea_staging/public_html/public/data'
+workspace = '/home/ansible/laravel_projects/nea_staging/'
+build_folder_file = 'builds/{{ build_file }}'
+
+
+# Webserver, Apache & FastCGI
+user = 'nea_staging'
+config_file_name = 'nea_staging_ansible.conf'
+php_wrapper = '/home/nea_staging/cgi-bin/php5-default/'
+php_fcgi = '/home/nea_staging/'
+log_location = '/var/log/apache2/'
+
+# Database env files
+db_connection = 'mysql'
+db_host = '192.168.80.43'
+db_port = '3306'
+db_database = 'nea_staging'
+db_username = 'nea_staging'
+db_password = '6HpJjNBcxZzfdF8S'
+
+# Mail configuration
+mail_driver = 'smtp'
+mail_host = '192.168.80.62'
+mail_port = '25'
+mail_username = 'null'
+mail_password = 'null'
+mail_encryption = 'null'
+mail_from_address = 'no-reply@neatyy.be'
+mail_from_name = 'Neatyy_STAGING'

@@ -1,0 +1,3 @@
+---
+  - include: web_app.yml
+  - include: drupal_app.yml

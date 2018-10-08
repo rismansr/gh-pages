@@ -1,0 +1,3 @@
+---
+  - include: web_app.yml
+  - include: laravel_app.yml

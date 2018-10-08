@@ -1,0 +1,33 @@
+ Label :odoo server voxteneo
+ Description :
+ Password :lJ9z3%Idr#
+ Account :voxteneo
+ URL :http://192.168.60.12
+
+ 
+ Label :odoo server odoo user
+ Description :
+ Password :9hU8t^R$
+ Account :odoo
+ URL :
+
+http:192.168.60.12:8069/web/database/selector
+choose this db : vox_2017-11-23
+
+user : admin
+pass : same as db name
+
+Settings > Technical > Outgoing Mail Server
+=================================================
+
+neatyy.com PROD 20.18
+
+MAIL_DRIVER=smtp
+MAIL_HOST=192.168.20.62
+MAIL_PORT=25
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=contact@neatyy.com
+MAIL_FROM_NAME=Neatyy
+==================================================

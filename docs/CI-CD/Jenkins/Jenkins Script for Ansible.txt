@@ -1,0 +1,12 @@
+To be placed on Jenkins configuration project on tab Build > Execute Shell
+
+#!/bin/bash
+DATE=`date +%Y-%m-%d_%H_%M_%S`
+FULL_BUILD_NAME=$DATE"_"$BUILD_DISPLAY_NAME
+project_ansible_path='/home/ansible/laravel_projects/pegi_qa'
+host='t9'
+cd $WORKSPACE/website && tar -cjSf ../$FULL_BUILD_NAME.tar.bz2 .
+scp $WORKSPACE/$FULL_BUILD_NAME.tar.bz2 root@192.168.80.101:$project_ansible_path/builds/
+rm $WORKSPACE/$FULL_BUILD_NAME.tar.bz2
+
+ssh root@192.168.80.101 "cd $project_ansible_path/deploy ; ansible-playbook -i $host playbooks/main.yml --tags=app_deploy --extra-vars build_file=$FULL_BUILD_NAME.tar.bz2"

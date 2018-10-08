@@ -1,0 +1,47 @@
+---
+  - block:
+
+    - name: Prepare the structure for the new package
+      file: dest={{application_folder_build}} state=directory
+
+    - name: Extract Jenkins package
+      unarchive: src={{workspace}}{{build_folder_file}} dest={{application_folder_build}} copy=yes
+
+    - name: Ensure .htaccess is deployed
+      template: src={{role_path}}/templates/.htaccess.j2 dest={{application_folder_build}}.htaccess    
+
+    - name: Move old Package
+      command: creates="{{application_folder_old}}" mv {{application_folder}} {{application_folder_old}}
+
+    - name: Set New Package
+      command: mv {{application_folder_build}} {{application_folder_root}}
+
+    - name: Remove any previous deployed package
+      file: path={{application_folder_old}} state=absent
+
+    - name: Modify settings file for the drupal application
+      template: src={{role_path}}/templates/settings.j2 dest={{application_settings}}/settings.php
+
+    - name: Retake ownership with the original user
+      file: path={{application_folder}} state=directory owner={{user}} group={{user}} recurse=yes
+
+    - name: Give Jenkins access to the projeect 
+      acl: name={{application_folder}} entity=jenkins etype=user permissions=rwx state=present recursive=yes
+
+#    - name: Fire up the php migratescript
+#      shell: chdir={{application_folder}} php migratescript.php
+
+    # - name: Revert all local git change
+    #   shell: chdir={{application_folder}} git checkout -- .
+
+    - name: Make the symlink to the static files
+      file: src={{application_data}} dest={{application_symlink}} owner={{user}} group={{user}} state=link 
+    
+    - name: Final check for appropriate user permission
+      file: path={{application_folder}} state=directory owner={{user}} group={{user}} recurse=yes
+
+    - name: clear cache
+      shell: chdir {{application_folder}} && drush cc all
+
+    tags:
+      - app_deploy

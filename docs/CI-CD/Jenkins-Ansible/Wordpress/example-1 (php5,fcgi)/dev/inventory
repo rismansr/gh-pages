@@ -1,0 +1,35 @@
+[webserver]
+192.168.80.42
+
+[dbserver]
+192.168.80.43
+
+[webserver:vars]
+ansible_ssh_user = 'jenkins'
+ansible_ssh_pass = 'v0xtene0'
+ansible_become_pass = 'v0xtene0'
+domain_name = 'tq-dev.t5.voxteneo.com'
+application_folder = '/home/tq-dev/public_html/'
+temporary_folder = '/home/tq-dev/public_html_new/'
+backup_folder = '/home/tq-dev/public_html_old/'
+application_settings = '/home/tq-dev/public_html/'
+application_data = '/home/tq-dev/data/'
+application_symlink = '/home/tq-dev/public_html/wp-content/uploads'
+workspace = '/home/ansible/wordpress_projects/tq-dev/'
+build_folder_file = 'builds/{{ build_file }}'
+
+# Webserver, Apache & FastCGI
+user = 'tq-dev'
+config_file_name = 'tq-dev_ansible.conf'
+php_wrapper = '/home/tq-dev/cgi-bin/php5-default/'
+php_fcgi = '/home/tq-dev/'
+log_location = '/var/log/apache2/'
+
+# Database env files
+db_host = '192.168.80.43'
+db_database = 'tq-dev'
+db_username = 'tq-dev'
+db_password = '2HnxmY7JwdTuQ7nN'
+db_backup = '/tmp/db_backup'
+#mail_username = 'staging@voxteneo.asia'
+#mail_password = 'TSDl_dlfg-354'

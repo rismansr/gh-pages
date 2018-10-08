@@ -1,0 +1,45 @@
+<VirtualHost *:8080>
+
+DocumentRoot {{application_folder}}
+ServerName {{domain_name}}
+SuexecUserGroup {{user}} {{user}}
+
+<Directory "{{application_folder}}" >
+
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+
+</Directory>
+
+    AddHandler php-fcgi .php
+    Action php-fcgi /fcgi-bin/php-fcgi-wrapper
+    Alias /fcgi-bin/ /home/pegi/cgi-bin/php5-default/
+
+LogLevel error
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" proxy
+SetEnvIf X-Forwarded-For "^.*\..*\..*\..*" forwarded
+CustomLog {{log_location}}{{domain_name}}-access.log combined env=!forwarded
+CustomLog {{log_location}}{{domain_name}}-access.log proxy env=forwarded
+ErrorLog {{log_location}}{{domain_name}}-error.log
+
+<Location /fcgi-bin/>
+SetHandler fcgid-script
+Options +ExecCGI
+</Location>
+
+<IfModule mod_fcgid.c>
+
+  IPCCommTimeout 900
+  FcgidMaxRequestLen 20971520
+  FcgidBusyTimeout 3600
+  FcgidIOTimeout 300
+
+  FcgidMinProcessesPerClass 0
+  FcgidIdleTimeout 3
+  FcgidProcessLifeTime 15
+
+</IfModule>
+</VirtualHost>

@@ -1,0 +1,44 @@
+---
+  - block:
+
+    - name: Remove any previous deployed package
+      file: path={{backup_folder}} state=absent
+    
+    - name: Create database backup folder
+      file: dest={{db_backup}} state=directory
+    
+    - name: Remove old database backup
+      file: dest={{db_backup}}/{{db_database}}.sql state=absent
+
+    - name: Make backup of the Database
+      mysql_db: state=dump login_host={{db_host}} login_user={{db_username}} login_password={{db_password}} name={{db_database}} target={{db_backup}}/{{db_database}}.sql
+
+    - name: Prepare the structure for the new package
+      file: dest={{temporary_folder}} state=directory
+
+    - name: Extract Jenkins package
+      unarchive: src={{workspace}}{{build_folder_file}} dest={{temporary_folder}} copy=yes
+
+    - name: Ensure .htaccess is deployed
+      template: src={{role_path}}/templates/.htaccess.j2 dest={{temporary_folder}}.htaccess
+
+    - name: Modify settings file for the wordpress application
+      template: src={{role_path}}/templates/wp_config.j2 dest={{temporary_folder}}/wp-config.php
+
+    - name: Retake ownership with the original user
+      file: path={{temporary_folder}} state=directory owner={{user}} group={{user}} recurse=yes
+
+    - name: Give Jenkins access to the projeect
+      acl: name={{temporary_folder}} entity=jenkins etype=user permissions=rwx state=present recursive=yes
+
+    - name: Rename temporary folder to application folder
+      shell: chdir=/home/{{user}}/ mv public_html public_html_old && mv public_html_new public_html
+
+    - name: Make the symlink to the static files
+      file: src={{application_data}} dest={{application_symlink}} owner={{user}} group={{user}} state=link
+
+    - name: Final check for appropriate user permission
+      file: path={{application_folder}} state=directory owner={{user}} group={{user}} recurse=yes
+
+    tags:
+      - app_deploy
